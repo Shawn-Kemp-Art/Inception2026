@@ -331,6 +331,13 @@ var center = new Point(wide/2,high/2)
 
 paper.view.autoUpdate = false;
 
+// Warm-up: yield once so paper.js has rendered before the first Clipper boolean op.
+// Without this, the very first clipUnite/clipSubtract/clipIntersect silently returns
+// an empty result (the "cold-start" bug) and the bottom layer renders empty,
+// leaving the artwork one layer short.
+paper.view.update();
+await new Promise(resolve => setTimeout(resolve, 0));
+
 for (z = 0; z < stacks; z++) {
     pz=z*prange;
     drawFrame(z); // Draw the initial frame
